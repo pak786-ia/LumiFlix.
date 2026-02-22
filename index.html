@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>LumiFlix · Cinematic Streaming</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Loading Overlay (initial) -->
+        <div class="app-loading" id="appLoading">
+            <div class="lumiflix-logo animate-pulse-glow">LUMIFLIX</div>
+              <div class="lumiflix-logo animate-pulse-glow">DEVELOPED BY IBRAHIM AHMED</div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+
+        <!-- Main App (hidden until loaded) -->
+        <div class="app-container hidden" id="appContainer">
+            <!-- Navigation -->
+            <nav class="navbar">
+                <div class="nav-left">
+                    <div class="logo">LUMIFLIX</div>
+                    <ul class="nav-links">
+                        <li><a href="#/" class="active" data-nav="home">Home</a></li>
+                        <li><a href="#/movies" data-nav="movies">Movies</a></li>
+                        <li><a href="#/tv" data-nav="tv">TV Shows</a></li>
+                    </ul>
+                </div>
+                <div class="nav-right">
+                    <div class="search-container">
+                        <input type="text" placeholder="Search movies, shows..." class="search-input" id="searchInput">
+                        <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="main-content" id="mainContent">
+                <!-- Dynamic content rendered here -->
+            </main>
+
+            <!-- Custom Video Player (hidden initially) -->
+            <div class="video-player-overlay" id="videoPlayerOverlay">
+                <div class="video-container">
+                    <!-- Cinematic Loading Screen (shown during buffering) -->
+                    <div class="cinematic-loader" id="cinematicLoader">
+                        <div class="loader-backdrop" id="loaderBackdrop"></div>
+                        <div class="loader-content">
+                            <div class="lumiflix-logo loader-logo">LUMIFLIX</div>
+                            <div class="loader-bar-container">
+                                <div class="loader-bar"></div>
+                            </div>
+                            <div class="loader-text">Preparing your stream...</div>
+                        </div>
+                    </div>
+
+                    <!-- Video Element -->
+                    <video id="videoPlayer" class="custom-video-player"></video>
+
+                    <!-- Custom Controls -->
+                    <div class="video-controls" id="videoControls">
+                        <!-- Progress Bar -->
+                        <div class="progress-bar-container" id="progressBarContainer">
+                            <div class="progress-bar">
+                                <div class="progress-played" id="progressPlayed"></div>
+                                <div class="progress-buffered" id="progressBuffered"></div>
+                                <div class="progress-handle" id="progressHandle"></div>
+                            </div>
+                        </div>
+
+                        <div class="controls-main">
+                            <div class="controls-left">
+                                <button class="control-btn" id="playPauseBtn">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" id="playIcon">
+                                        <path fill="currentColor" d="M8 5v14l11-7z"/>
+                                    </svg>
+                                    <svg viewBox="0 0 24 24" width="24" height="24" id="pauseIcon" class="hidden">
+                                        <path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                                    </svg>
+                                </button>
+                                <button class="control-btn" id="volumeBtn">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" id="volumeHighIcon">
+                                        <path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3z"/>
+                                    </svg>
+                                </button>
+                                <div class="volume-slider-container" id="volumeSliderContainer">
+                                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+                                </div>
+                                <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+                            </div>
+
+                            <div class="controls-right">
+                                <!-- Quality Selector -->
+                                <div class="dropdown-container" id="qualityDropdown">
+                                    <button class="control-btn dropdown-btn">
+                                        <span class="quality-text">HD</span>
+                                        <svg viewBox="0 0 24 24" width="16" height="16">
+                                            <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+                                        </svg>
+                                    </button>
+                                    <div class="dropdown-menu" id="qualityMenu"></div>
+                                </div>
+
+                                <!-- Language Selector -->
+                                <div class="dropdown-container" id="languageDropdown">
+                                    <button class="control-btn dropdown-btn">
+                                        <span class="language-text">EN</span>
+                                        <svg viewBox="0 0 24 24" width="16" height="16">
+                                            <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+                                        </svg>
+                                    </button>
+                                    <div class="dropdown-menu" id="languageMenu"></div>
+                                </div>
+
+                                <!-- Episode Navigation (for TV shows) -->
+                                <div class="episode-nav-container hidden" id="episodeNavContainer">
+                                    <button class="control-btn" id="prevEpisodeBtn" title="Previous Episode">
+                                        <svg viewBox="0 0 24 24" width="20" height="20">
+                                            <path fill="currentColor" d="M6 18V6h2v12H6zm10-6l-8 5V7l8 5z"/>
+                                        </svg>
+                                    </button>
+                                    <button class="control-btn" id="nextEpisodeBtn" title="Next Episode">
+                                        <svg viewBox="0 0 24 24" width="20" height="20">
+                                            <path fill="currentColor" d="M6 18l8-5-8-5v10zm12-12v12h-2V6h2z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- Fullscreen -->
+                                <button class="control-btn" id="fullscreenBtn">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" id="fullscreenIcon">
+                                        <path fill="currentColor" d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                                    </svg>
+                                </button>
+
+                                <!-- Close Player -->
+                                <button class="control-btn close-player" id="closePlayerBtn">
+                                    <svg viewBox="0 0 24 24" width="24" height="24">
+                                        <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Premium Error Panel -->
+                    <div class="error-panel hidden" id="errorPanel">
+                        <div class="error-content">
+                            <svg class="error-icon" viewBox="0 0 24 24" width="48" height="48">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                            <h2 class="error-title" id="errorTitle">Playback Unavailable</h2>
+                            <p class="error-message" id="errorMessage">Server not responding</p>
+                            <div class="error-actions">
+                                <button class="error-btn retry-btn" id="retryPlaybackBtn">Retry</button>
+                                <button class="error-btn back-btn" id="goBackBtn">Go Back</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates -->
+    <template id="movieCardTemplate">
+        <div class="movie-card">
+            <div class="card-poster">
+                <img src="" alt="" class="poster-img" loading="lazy">
+                <div class="card-overlay">
+                    <button class="watch-now-btn">Watch Now</button>
+                </div>
+                <div class="card-rating">
+                    <span class="rating-star">★</span>
+                    <span class="rating-value"></span>
+                </div>
+            </div>
+            <div class="card-info">
+                <h3 class="card-title"></h3>
+                <div class="card-meta">
+                    <span class="card-year"></span>
+                    <span class="card-type"></span>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="episodeItemTemplate">
+        <div class="episode-item" data-episode-index="">
+            <div class="episode-thumbnail">
+                <img src="" alt="" loading="lazy">
+                <div class="episode-play-overlay">
+                    <svg viewBox="0 0 24 24" width="32" height="32">
+                        <path fill="currentColor" d="M8 5v14l11-7z"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="episode-details">
+                <div class="episode-header">
+                    <span class="episode-number"></span>
+                    <span class="episode-runtime"></span>
+                </div>
+                <h4 class="episode-name"></h4>
+                <p class="episode-overview"></p>
+                <div class="episode-progress-bar">
+                    <div class="episode-progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="app.js"></script>
+</body>
+</html>
